@@ -28,6 +28,9 @@
     <Filter Include="Shaders\solidColor">
       <UniqueIdentifier>{72b24300-2f8a-4f13-a163-41a291e16168}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\basicLighting">
+      <UniqueIdentifier>{81e0c1c1-2764-4795-8f30-5889cff97ccb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -60,6 +63,12 @@
     </None>
     <None Include="..\Shaders\solidColor\solidColor.frag">
       <Filter>Shaders\solidColor</Filter>
+    </None>
+    <None Include="..\Shaders\basicLighting\basicLighting.vert">
+      <Filter>Shaders\basicLighting</Filter>
+    </None>
+    <None Include="..\Shaders\basicLighting\basicLighting.frag">
+      <Filter>Shaders\basicLighting</Filter>
     </None>
   </ItemGroup>
 </Project>

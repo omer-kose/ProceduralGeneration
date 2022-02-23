@@ -1,0 +1,5 @@
+-Try to generate a heightmap in OpenGL
+-Learn procedural generation
+-Apply it to terrain generation
+-Add ImGui functionality to make it a real program
+-Learn CMAKE and make it compilable for everyone

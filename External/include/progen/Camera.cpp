@@ -137,13 +137,13 @@ void Camera::processMouseScroll(float yOffset)
 void Camera::moveCameraUp(double deltaTime, int speedUp)
 {
 	float velocity = movementSpeed * deltaTime * speedUp;
-	position += up * velocity;
+	position += glm::vec3(0.0, 1.0, 0.0) * velocity;
 }
 
 void Camera::moveCameraDown(double deltaTime, int speedUp)
 {
 	float velocity = movementSpeed * deltaTime * speedUp;
-	position -= up * velocity;
+	position -= glm::vec3(0.0, 1.0, 0.0) * velocity;
 }
 
 void Camera::updateCameraVectors()

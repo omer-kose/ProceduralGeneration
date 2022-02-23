@@ -156,6 +156,8 @@
     <ClInclude Include="..\External\include\progen\Utilities.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Shaders\basicLighting\basicLighting.frag" />
+    <None Include="..\Shaders\basicLighting\basicLighting.vert" />
     <None Include="..\Shaders\solidColor\solidColor.frag" />
     <None Include="..\Shaders\solidColor\solidColor.vert" />
   </ItemGroup>
