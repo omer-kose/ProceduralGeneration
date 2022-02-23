@@ -45,22 +45,42 @@ void processInput(GLFWwindow* window)
 		glfwSetWindowShouldClose(window, true);
 	}
 
+	int speedUp = 1; //Default
+
+	//If shift is pressed move the camera faster
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		speedUp = 2;	
+	
 	//Camera movement
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.processKeyboard(FORWARD, deltaTime);
+		camera.processKeyboard(FORWARD, deltaTime, speedUp);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.processKeyboard(BACKWARD, deltaTime);
+		camera.processKeyboard(BACKWARD, deltaTime, speedUp);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.processKeyboard(LEFT, deltaTime);
+		camera.processKeyboard(LEFT, deltaTime, speedUp);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.processKeyboard(RIGHT, deltaTime);
+		camera.processKeyboard(RIGHT, deltaTime, speedUp);
+
+
+
+	//Camera y-axis movement
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		camera.moveCameraUp(deltaTime, speedUp);
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+		camera.moveCameraDown(deltaTime, speedUp);
 
 }
 
 //Callback function for mouse position inputs
 void mouse_callback(GLFWwindow* window, double xPos, double yPos)
 {
-	camera.processMouseMovement(xPos, yPos, GL_TRUE);
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+	{
+		camera.processMouseMovement(xPos, yPos, GL_TRUE);
+	}
+
+	camera.setLastX(xPos);
+	camera.setLastY(yPos);	
 }
 
 void scroll_callback(GLFWwindow* window, double xOffset, double yOffset)
@@ -105,7 +125,7 @@ int setup()
 	glfwSetScrollCallback(window, scroll_callback);
 
 	//GLFW will capture the mouse and will hide the cursor
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	//Configure Global OpenGL State
 	glEnable(GL_DEPTH_TEST);
@@ -159,6 +179,11 @@ GLuint testRectangle()
 void renderTestRectangle(GLuint VAO, Shader shader)
 {
 	shader.use();
+	glm::mat4 view = camera.getViewMatrix();
+	glm::mat4 projection = glm::perspective(glm::radians(camera.getFov()), (float)SCR_WIDTH / SCR_HEIGHT, 0.1f, 100.0f);
+	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 PV = projection * view;
+	shader.setMat4("PVM", PV * model);
 	glBindVertexArray(VAO);
 	//total 6 indices since we have triangles
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -170,14 +195,15 @@ int main()
 	setup();
 
 	GLuint VAO = testRectangle();
-	Shader testShader("../Shaders/solidColor/solidColor.vs", "../Shaders/solidColor/solidColor.fs");
+	Shader testShader("../Shaders/solidColor/solidColor.vert", "../Shaders/solidColor/solidColor.frag");
 
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
 	{
+		//Update deltaTime
+		updateDeltaTime();
 		// input
-		// -----
 		processInput(window);
 
 		// render

@@ -55,10 +55,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Shaders\solidColor\solidColor.vs">
+    <None Include="..\Shaders\solidColor\solidColor.vert">
       <Filter>Shaders\solidColor</Filter>
     </None>
-    <None Include="..\Shaders\solidColor\solidColor.fs">
+    <None Include="..\Shaders\solidColor\solidColor.frag">
       <Filter>Shaders\solidColor</Filter>
     </None>
   </ItemGroup>

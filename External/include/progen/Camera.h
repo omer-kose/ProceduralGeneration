@@ -43,11 +43,16 @@ public:
 	void setSpeed(float speed_in);
 	void setSensivity(float sensivity_in);
 	void setZoom(float zoom_in);
+	//Camera will always keep track of the mouse position via this setters
+	void setLastX(double xPos);
+	void setLastY(double yPos);
 
 
-	void processKeyboard(Camera_Movement direction, double deltaTime);
+	void processKeyboard(Camera_Movement direction, double deltaTime, int speedUp);
 	void processMouseMovement(double xPos, double yPos, GLboolean constrainPitch = true);
 	void processMouseScroll(float yOffset);
+	void moveCameraUp(double deltaTime, int speedUp);
+	void moveCameraDown(double deltaTime, int speedUp);
 
 private:
 	//Updates the orthonormal base of the camera

@@ -65,9 +65,19 @@ void Camera::setZoom(float fov_in)
 	fov = fov_in;
 }
 
-void Camera::processKeyboard(Camera_Movement direction, double deltaTime)
+void Camera::setLastX(double xPos)
 {
-	float velocity = movementSpeed * deltaTime;
+	lastX = xPos;
+}
+
+void Camera::setLastY(double yPos)
+{
+	lastY = yPos;
+}
+
+void Camera::processKeyboard(Camera_Movement direction, double deltaTime, int speedUp)
+{
+	float velocity = movementSpeed * deltaTime * speedUp;
 	if (direction == FORWARD)
 		position += front * velocity;
 	if (direction == BACKWARD)
@@ -123,6 +133,18 @@ void Camera::processMouseScroll(float yOffset)
 		fov = 45.0f;
 }
 
+
+void Camera::moveCameraUp(double deltaTime, int speedUp)
+{
+	float velocity = movementSpeed * deltaTime * speedUp;
+	position += up * velocity;
+}
+
+void Camera::moveCameraDown(double deltaTime, int speedUp)
+{
+	float velocity = movementSpeed * deltaTime * speedUp;
+	position -= up * velocity;
+}
 
 void Camera::updateCameraVectors()
 {

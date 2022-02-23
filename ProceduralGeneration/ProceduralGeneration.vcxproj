@@ -156,8 +156,8 @@
     <ClInclude Include="..\External\include\progen\Utilities.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Shaders\solidColor\solidColor.fs" />
-    <None Include="..\Shaders\solidColor\solidColor.vs" />
+    <None Include="..\Shaders\solidColor\solidColor.frag" />
+    <None Include="..\Shaders\solidColor\solidColor.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
