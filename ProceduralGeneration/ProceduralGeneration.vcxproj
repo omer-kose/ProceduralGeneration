@@ -155,6 +155,10 @@
     <ClInclude Include="..\External\include\progen\Shader.h" />
     <ClInclude Include="..\External\include\progen\Utilities.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Shaders\solidColor\solidColor.fs" />
+    <None Include="..\Shaders\solidColor\solidColor.vs" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

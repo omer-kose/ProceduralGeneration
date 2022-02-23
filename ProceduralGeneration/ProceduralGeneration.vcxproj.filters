@@ -22,6 +22,12 @@
     <Filter Include="progen\sources">
       <UniqueIdentifier>{1ec4bd93-df00-4a7b-b863-559f81bc1407}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{6278db5e-2acb-4e4b-8fc7-08b94143a064}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\solidColor">
+      <UniqueIdentifier>{72b24300-2f8a-4f13-a163-41a291e16168}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -47,5 +53,13 @@
     <ClInclude Include="..\External\include\progen\Utilities.h">
       <Filter>progen\headers</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Shaders\solidColor\solidColor.vs">
+      <Filter>Shaders\solidColor</Filter>
+    </None>
+    <None Include="..\Shaders\solidColor\solidColor.fs">
+      <Filter>Shaders\solidColor</Filter>
+    </None>
   </ItemGroup>
 </Project>
