@@ -1,9 +1,9 @@
-#include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
 
 
 //My headers
@@ -15,7 +15,15 @@
 
 
 //Utility Headers
+#include <iostream>
 #include <vector>
+
+
+//ImGui
+#include <ImGui/imgui.h>
+#include <ImGui/imgui_impl_glfw.h> 
+#include <ImGui/imgui_impl_opengl3.h>
+
 
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -27,6 +35,28 @@ double lastFrame = 0.0;
 
 //Window
 GLFWwindow* window;
+
+
+//ImGui Variables
+ImGuiIO* io;
+
+
+
+//Terrain Variables
+//Some globals that will be used to draw the terrain
+GLuint terrainVAO, terrainVBO, terrainEBO;
+GLuint triCount;
+int W = 10, H = 10;
+int numXVertices = 256;
+int numZVertices = 256;
+//Noise Parameters
+double scale = 0.3;
+double octaves = 4;
+double persistence = 0.5;
+double lacunarity = 2.0;
+int seed = 21;
+glm::vec2 offset = glm::vec2(0.0, 0.0);
+
 
 
 void updateDeltaTime()
@@ -136,6 +166,17 @@ int setup()
 	//Configure Global OpenGL State
 	glEnable(GL_DEPTH_TEST);
 
+
+	//Setup ImGui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	io = &ImGui::GetIO();
+	(void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
+
+
 	return 0;
 }
 
@@ -200,17 +241,15 @@ void renderTestRectangle(GLuint VAO, Shader shader)
 
 
 
-//Some globals that will be used to draw the terrain
-GLuint terrainVAO, terrainVBO, terrainEBO;
-GLuint triCount;
+
 /*
 	Generate Terrain generates an heightmap given: 
 	Size:
 	W: Width of the terrain
 	L: Length of the terrain
 	Resolution:
-	WRes: Number of vertices do we have in X axis
-	LRes: Number of vertices do we have in Z axis
+	numXVertices: Number of vertices do we have in X axis
+	numZVertices: Number of vertices do we have in Z axis
 
 	For vertex generation the following approach is used:
 	Along X and Z axis I will generate vertices and normalize them between -0.5 and 0.5
@@ -219,8 +258,8 @@ GLuint triCount;
 void generateTerrain
 (	int W, 
 	int L, 
-	int WRes, 
-	int LRes,
+	int numXVertices, 
+	int numZVertices,
 	const std::vector<std::vector<double>>& heightMap
 )
 {
@@ -228,19 +267,19 @@ void generateTerrain
 	using namespace std;
 	using namespace glm;
 	
-	const int nVertices = WRes * LRes;
+	const int nVertices = numXVertices * numZVertices;
 	vector<ivec3> tris;
 	vector<vec3> data; //Total drawing data in the form pos1|norm1|pos2|norm2...
 
 	int vi = 0; //index of the currently created vertex
 
 	//Generate from top-left to bottom-right. (If thinked in 2D)
-	for (int z = 0; z < LRes; ++z)
+	for (int z = 0; z < numZVertices; ++z)
 	{
-		for (int x = 0; x < WRes; ++x)
+		for (int x = 0; x < numXVertices; ++x)
 		{
 			//Generate the normalized point
-			vec3 p = vec3(x/(float)(WRes-1), 0.0, z/(float)(LRes-1));
+			vec3 p = vec3(x/(float)(numXVertices-1), 0.0, z/(float)(numZVertices-1));
 			//Cast it back in range [-W/2,-L/2:W/2,L/2] range	
 			p.x *= W;
 			p.z *= L;
@@ -258,12 +297,12 @@ void generateTerrain
 					 ^___^
 					 |\  |
 					 | \ |
-			(i+WRes)>|__\|
+			(i+numXVertices)>|__\|
 			*/
-			if (((vi + 1) % WRes != 0) && ((z + 1) < LRes))
+			if (((vi + 1) % numXVertices != 0) && ((z + 1) < numZVertices))
 			{
-				ivec3 tri1 = ivec3(vi, vi+WRes, vi+WRes+1);
-				ivec3 tri2 = ivec3(vi, vi+WRes+1, vi+1);
+				ivec3 tri1 = ivec3(vi, vi+numXVertices, vi+numXVertices+1);
+				ivec3 tri2 = ivec3(vi, vi+numXVertices+1, vi+1);
 
 				tris.push_back(tri1);
 				tris.push_back(tri2);
@@ -317,12 +356,30 @@ void renderTheTerrain(Shader shader)
 
 }
 
+
+void handleImGui()
+{
+	//Set the new ImGui Frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+	
+	//ImGui Handling
+	ImGui::Begin("Test Window");
+	ImGui::End();
+
+
+	//Render the ImGui Window
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
 int main()
 {
 	setup();
 
 	PerlinNoise noise;
-	std::vector<std::vector<double>> noiseMap = noise.generateNoiseMap(256, 256, 0.3);
+	std::vector<std::vector<double>> noiseMap = noise.generateNoiseMap(numXVertices, numZVertices, seed, scale, octaves, persistence, lacunarity, offset);
 
 	//for (const auto& row : noiseMap)
 	//{
@@ -333,10 +390,10 @@ int main()
 	//	}
 	//}
 
-	generateTerrain(10, 10, 256, 256, noiseMap);
-	
-	
+	generateTerrain(10, 10, numXVertices, numZVertices, noiseMap);
 	Shader terrainShader("../Shaders/basicLighting/basicLighting.vert", "../Shaders/basicLighting/basicLighting.frag");
+
+
 
 	// render loop
 	// -----------
@@ -352,15 +409,23 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
 		//Render Shapes
 		renderTheTerrain(terrainShader);
+
+		//Handle ImGui
+		handleImGui();
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+
+	//Terminate ImGui
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------

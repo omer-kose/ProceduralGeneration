@@ -145,6 +145,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\External\include\ImGui\imgui.cpp" />
+    <ClCompile Include="..\External\include\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="..\External\include\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="..\External\include\ImGui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\External\include\ImGui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\External\include\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="..\External\include\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="..\External\include\progen\Camera.cpp" />
     <ClCompile Include="..\External\include\progen\PerlinNoise.cpp" />
     <ClCompile Include="..\External\include\progen\Shader.cpp" />
@@ -152,6 +159,15 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\External\include\ImGui\imconfig.h" />
+    <ClInclude Include="..\External\include\ImGui\imgui.h" />
+    <ClInclude Include="..\External\include\ImGui\imgui_impl_glfw.h" />
+    <ClInclude Include="..\External\include\ImGui\imgui_impl_opengl3.h" />
+    <ClInclude Include="..\External\include\ImGui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="..\External\include\ImGui\imgui_internal.h" />
+    <ClInclude Include="..\External\include\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="..\External\include\ImGui\imstb_textedit.h" />
+    <ClInclude Include="..\External\include\ImGui\imstb_truetype.h" />
     <ClInclude Include="..\External\include\progen\Camera.h" />
     <ClInclude Include="..\External\include\progen\PerlinNoise.h" />
     <ClInclude Include="..\External\include\progen\Shader.h" />
