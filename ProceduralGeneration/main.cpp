@@ -26,7 +26,7 @@
 
 
 
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 5.0f, 15.0f));
 
 
 //Time parameters
@@ -46,12 +46,13 @@ ImGuiIO* io;
 //Some globals that will be used to draw the terrain
 GLuint terrainVAO, terrainVBO, terrainEBO;
 GLuint triCount;
-int W = 10, H = 10;
+PerlinNoise noise;
+int W = 10, L = 10;
 int numXVertices = 256;
 int numZVertices = 256;
 //Noise Parameters
 double scale = 0.3;
-double octaves = 4;
+int octaves = 4;
 double persistence = 0.5;
 double lacunarity = 2.0;
 int seed = 21;
@@ -241,6 +242,18 @@ void renderTestRectangle(GLuint VAO, Shader shader)
 
 
 
+/*
+	This function creates VAO,VBO and EBO.
+	Pretty basic.
+*/
+void createTerrainOpenGLInformation()
+{
+	//Now set and configure the data for OpenGL
+	glGenVertexArrays(1, &terrainVAO);
+	glGenBuffers(1, &terrainVBO);
+	glGenBuffers(1, &terrainEBO);
+}
+
 
 /*
 	Generate Terrain generates an heightmap given: 
@@ -267,7 +280,6 @@ void generateTerrain
 	using namespace std;
 	using namespace glm;
 	
-	const int nVertices = numXVertices * numZVertices;
 	vector<ivec3> tris;
 	vector<vec3> data; //Total drawing data in the form pos1|norm1|pos2|norm2...
 
@@ -314,11 +326,6 @@ void generateTerrain
 		}
 	}
 
-	//Now set and configure the data for OpenGL
-	glGenVertexArrays(1, &terrainVAO);
-	glGenBuffers(1, &terrainVBO);
-	glGenBuffers(1, &terrainEBO);
-
 	//Bind VAO
 	glBindVertexArray(terrainVAO);
 	//Bind VBO, send data
@@ -356,6 +363,11 @@ void renderTheTerrain(Shader shader)
 
 }
 
+//Implemented Slider Double implementation for ImGui 
+bool sliderDouble(const char* label, double* v, double v_min, double v_max)
+{
+	return ImGui::SliderScalar(label, ImGuiDataType_Double, v, &v_min, &v_max);
+}
 
 void handleImGui()
 {
@@ -363,9 +375,35 @@ void handleImGui()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	
+
 	//ImGui Handling
-	ImGui::Begin("Test Window");
+	ImGui::Begin("Terrain Information");
+	//Width 
+	ImGui::SliderInt("Width", &W, 10, 100);
+	//Length 
+	ImGui::SliderInt("Length", &L, 10, 100);
+	//X Resolution
+	ImGui::InputInt("Number of X Vertices", &numXVertices);
+	//Z Resolution
+	ImGui::InputInt("Number of Z Vertices", &numZVertices);
+	//Scale 
+	sliderDouble("Scale", &scale, 0.1, 1.0);
+	//Number of Octaves
+	ImGui::SliderInt("Number of Octaves", &octaves, 1, 5);
+	//Persistence
+	sliderDouble("Persistence", &persistence, 0.1, 0.9);
+	//Lacunarity
+	sliderDouble("Lacunarity", &lacunarity, 1.0, 10.0);
+	//Seed of the octave offset
+	ImGui::InputInt("Seed", &seed);
+	//Initial Offset of the Octave
+	ImGui::SliderFloat("Initial Offset X", &offset.x, 0.0f, 20.0f);
+	ImGui::SliderFloat("Initial Offset Y", &offset.y, 0.0f, 20.0f);
+	if (ImGui::Button("Generate"))
+	{
+		std::vector<std::vector<double>> noiseMap = noise.generateNoiseMap(numXVertices, numZVertices, seed, scale, octaves, persistence, lacunarity, offset);
+		generateTerrain(W, L, numXVertices, numZVertices, noiseMap);
+	}
 	ImGui::End();
 
 
@@ -377,22 +415,8 @@ void handleImGui()
 int main()
 {
 	setup();
-
-	PerlinNoise noise;
-	std::vector<std::vector<double>> noiseMap = noise.generateNoiseMap(numXVertices, numZVertices, seed, scale, octaves, persistence, lacunarity, offset);
-
-	//for (const auto& row : noiseMap)
-	//{
-	//	std::cout << ":::::::::::::::::ROW::::::::::::\n";
-	//	for (double d : row)
-	//	{
-	//		std::cout << d << "\n";
-	//	}
-	//}
-
-	generateTerrain(10, 10, numXVertices, numZVertices, noiseMap);
+	createTerrainOpenGLInformation();
 	Shader terrainShader("../Shaders/basicLighting/basicLighting.vert", "../Shaders/basicLighting/basicLighting.frag");
-
 
 
 	// render loop
