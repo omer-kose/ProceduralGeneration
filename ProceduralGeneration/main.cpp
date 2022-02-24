@@ -10,6 +10,8 @@
 #include "progen/Utilities.h"
 #include "progen/Shader.h"
 #include "progen/Camera.h"
+#include "progen/PerlinNoise.h"
+
 
 
 //Utility Headers
@@ -214,7 +216,13 @@ GLuint triCount;
 	Along X and Z axis I will generate vertices and normalize them between -0.5 and 0.5
 	then cast them back between [-W/2,-L/2:W/2,L/2]  range.
 */
-void generateTerrain(int W, int L, int WRes, int LRes)
+void generateTerrain
+(	int W, 
+	int L, 
+	int WRes, 
+	int LRes,
+	const std::vector<std::vector<double>>& heightMap
+)
 {
 	//I am lazy
 	using namespace std;
@@ -239,13 +247,8 @@ void generateTerrain(int W, int L, int WRes, int LRes)
 			p.x -= W / 2.0;
 			p.z -= L / 2.0;
 
-			//For Now randomized Height
-			GLfloat h = rand();
-			h *= 2;
-			h -= RAND_MAX;
-			h /= RAND_MAX;
-			p.y = h;
-			//Randomized Height ends
+			//Pick the height value from the given height map
+			p.y = heightMap[z][x];
 
 			vec3 n = vec3(0.0, 1.0, 0.0);
 
@@ -318,7 +321,21 @@ int main()
 {
 	setup();
 
-	generateTerrain(10, 10, 256, 256);
+	PerlinNoise noise;
+	std::vector<std::vector<double>> noiseMap = noise.generateNoiseMap(256, 256, 0.3);
+
+	//for (const auto& row : noiseMap)
+	//{
+	//	std::cout << ":::::::::::::::::ROW::::::::::::\n";
+	//	for (double d : row)
+	//	{
+	//		std::cout << d << "\n";
+	//	}
+	//}
+
+	generateTerrain(10, 10, 256, 256, noiseMap);
+	
+	
 	Shader terrainShader("../Shaders/basicLighting/basicLighting.vert", "../Shaders/basicLighting/basicLighting.frag");
 
 	// render loop

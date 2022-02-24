@@ -45,6 +45,9 @@
     <ClCompile Include="..\External\include\progen\Shader.cpp">
       <Filter>progen\sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\External\include\progen\PerlinNoise.cpp">
+      <Filter>progen\sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\include\progen\Camera.h">
@@ -54,6 +57,9 @@
       <Filter>progen\headers</Filter>
     </ClInclude>
     <ClInclude Include="..\External\include\progen\Utilities.h">
+      <Filter>progen\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\include\progen\PerlinNoise.h">
       <Filter>progen\headers</Filter>
     </ClInclude>
   </ItemGroup>
