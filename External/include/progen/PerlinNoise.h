@@ -42,17 +42,6 @@ public:
 	PerlinNoise();
 	//in our case Z is not important 
 	double noise(double x, double y, double z) const;
-	std::vector<std::vector<double>> generateNoiseMap(
-		int W, 
-		int H, 
-		int seed,
-		double scale, 
-		int octaves, 
-		double persistence, 
-		double lacunarity,
-		glm::vec2 offset
-													) const;
-
 	std::vector<std::vector<double>> generateNoiseMap(const NoiseData& noiseData) const;
 
 private:

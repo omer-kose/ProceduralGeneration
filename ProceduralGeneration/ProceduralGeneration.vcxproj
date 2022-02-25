@@ -152,10 +152,14 @@
     <ClCompile Include="..\External\include\ImGui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="..\External\include\ImGui\imgui_tables.cpp" />
     <ClCompile Include="..\External\include\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="..\External\include\progen\Biome.cpp" />
     <ClCompile Include="..\External\include\progen\Camera.cpp" />
+    <ClCompile Include="..\External\include\progen\Grass.cpp" />
+    <ClCompile Include="..\External\include\progen\Land.cpp" />
     <ClCompile Include="..\External\include\progen\PerlinNoise.cpp" />
     <ClCompile Include="..\External\include\progen\Shader.cpp" />
     <ClCompile Include="..\External\include\progen\Terrain.cpp" />
+    <ClCompile Include="..\External\include\progen\Water.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -169,11 +173,15 @@
     <ClInclude Include="..\External\include\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\External\include\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\External\include\ImGui\imstb_truetype.h" />
+    <ClInclude Include="..\External\include\progen\Biome.h" />
     <ClInclude Include="..\External\include\progen\Camera.h" />
+    <ClInclude Include="..\External\include\progen\Grass.h" />
+    <ClInclude Include="..\External\include\progen\Land.h" />
     <ClInclude Include="..\External\include\progen\PerlinNoise.h" />
     <ClInclude Include="..\External\include\progen\Shader.h" />
     <ClInclude Include="..\External\include\progen\Terrain.h" />
     <ClInclude Include="..\External\include\progen\Utilities.h" />
+    <ClInclude Include="..\External\include\progen\Water.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\basicLighting\basicLighting.frag" />

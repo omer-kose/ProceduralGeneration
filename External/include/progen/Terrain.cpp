@@ -2,6 +2,9 @@
 
 Terrain::Terrain()
 {
+	biomes.push_back(&WATER);
+	biomes.push_back(&GRASS);
+	biomes.push_back(&LAND);
 	createTerrainOpenGLInformation();
 }
 
@@ -12,14 +15,50 @@ void Terrain::generate(const TerrainData& tData, const NoiseData& nData)
 	generateTerrain(tData, noiseMap);
 }
 
+void Terrain::setupOpenGLBuffers()
+{
+	//Bind VAO
+	glBindVertexArray(terrainVAO);
+	//Bind VBO, send data
+	glBindBuffer(GL_ARRAY_BUFFER, terrainVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertexData.size(), vertexData.data(), GL_STATIC_DRAW);
+	//Bind EBO, send indices 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, terrainEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::ivec3) * tris.size(), tris.data(), GL_STATIC_DRAW);
+
+	//Configure Vertex Attributes
+	//POSITION
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+
+	//NORMALS
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+
+	//Color
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+
+	//Data passing and configuration is done 
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
+
+/*
+	Given the height map and information generateTerrain creates position and connectivity data.
+	Depending on the improvements it can do more or less.
+*/
 void Terrain::generateTerrain(const TerrainData& tData, const std::vector<std::vector<double>>& heightMap)
 {
 	//I am lazy
 	using namespace std;
 	using namespace glm;
 
-	vector<ivec3> tris;
-	vector<vec3> data; //Total drawing data in the form pos1|norm1|pos2|norm2...
+	//Clear up the previous data
+	vertexData.clear();
+	tris.clear();
+
 
 	int vi = 0; //index of the currently created vertex
 
@@ -28,6 +67,7 @@ void Terrain::generateTerrain(const TerrainData& tData, const std::vector<std::v
 	{
 		for (int x = 0; x < tData.numXVertices; ++x)
 		{
+			Vertex v;
 			//Generate the normalized point
 			vec3 p = vec3(x / (float)(tData.numXVertices - 1), 0.0, z / (float)(tData.numZVertices - 1));
 			//Cast it back in range [-W/2,-L/2:W/2,L/2] range	
@@ -39,7 +79,21 @@ void Terrain::generateTerrain(const TerrainData& tData, const std::vector<std::v
 			//Pick the height value from the given height map
 			p.y = heightMap[z][x];
 
+			//Traverse biomes and see which biome fit
+			for (const Biome* biome : biomes)
+			{
+				if (biome->inRange(p.y))
+				{
+					v.color = biome->getColor();
+					break;
+				}
+			}
+
+
 			vec3 n = vec3(0.0, 1.0, 0.0);
+
+			v.pos = p;
+			v.normal = n;
 
 			//Now generate quads (2 triangles) in the following fashion:
 			/*
@@ -58,33 +112,14 @@ void Terrain::generateTerrain(const TerrainData& tData, const std::vector<std::v
 				tris.push_back(tri2);
 			}
 
-			data.push_back(p);
-			data.push_back(n);
+			vertexData.push_back(v);
 			++vi;
 		}
 	}
 
-	//Bind VAO
-	glBindVertexArray(terrainVAO);
-	//Bind VBO, send data
-	glBindBuffer(GL_ARRAY_BUFFER, terrainVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vec3) * data.size(), data.data(), GL_STATIC_DRAW);
-	//Bind EBO, send indices 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, terrainEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ivec3) * tris.size(), tris.data(), GL_STATIC_DRAW);
-
-	//Configure Vertex Attributes
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)0);
-
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-
-	//Data passing and configuration is done 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
 	triCount = tris.size();
+	setupOpenGLBuffers();
+
 }
 
 void Terrain::createTerrainOpenGLInformation()

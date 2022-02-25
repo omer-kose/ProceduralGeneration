@@ -75,6 +75,18 @@
     <ClCompile Include="..\External\include\progen\Terrain.cpp">
       <Filter>progen\sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\External\include\progen\Biome.cpp">
+      <Filter>progen\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\include\progen\Water.cpp">
+      <Filter>progen\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\include\progen\Grass.cpp">
+      <Filter>progen\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\include\progen\Land.cpp">
+      <Filter>progen\sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\include\progen\Camera.h">
@@ -117,6 +129,18 @@
       <Filter>ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\External\include\progen\Terrain.h">
+      <Filter>progen\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\include\progen\Biome.h">
+      <Filter>progen\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\include\progen\Water.h">
+      <Filter>progen\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\include\progen\Grass.h">
+      <Filter>progen\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\include\progen\Land.h">
       <Filter>progen\headers</Filter>
     </ClInclude>
   </ItemGroup>

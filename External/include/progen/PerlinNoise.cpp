@@ -54,88 +54,6 @@ double PerlinNoise::noise(double x, double y, double z) const
 	return  lerp(w, lerp(v, lerp(u, grad(p[AA], x, y, z), grad(p[BA], x - 1, y, z)), lerp(u, grad(p[AB], x, y - 1, z), grad(p[BB], x - 1, y - 1, z))), lerp(v, lerp(u, grad(p[AA + 1], x, y, z - 1), grad(p[BA + 1], x - 1, y, z - 1)), lerp(u, grad(p[AB + 1], x, y - 1, z - 1), grad(p[BB + 1], x - 1, y - 1, z - 1))));
 }
 
-std::vector<std::vector<double>> PerlinNoise::generateNoiseMap
-(	int W, //Width of the map 
-	int H, //Height of the map
-	int seed, //Seed of the MT Pseudo Random Engine 
-	double scale, //Scale to tweak x and y integer values.
-	int octaves, //How many octaves do we have ?  
-	double persistence, 
-	double lacunarity,
-	glm::vec2 offset //total offset of octaves
-) const
-{
-	if (scale <= 0)
-	{
-		scale = 0.001;
-	}
-
-	std::vector<std::vector<double>> noiseMap(H, std::vector<double>(W));
-	std::mt19937 mt(seed);
-	std::uniform_real_distribution<double> dist(-10000, 10000); 
-	//We want to each octave to be sampled from a different location of the Perlin Noise Map
-	//So each octave will use an offset
-	std::vector<glm::vec2> octaveOffsets(octaves);
-
-	double halfW = W / 2;
-	double halfH = H / 2;
-
-
-	for (int i = 0; i < octaves; ++i)
-	{
-		double offsetX = dist(mt);
-		double offsetY = dist(mt);
-		octaveOffsets[i].x = offsetX + offset.x;
-		octaveOffsets[i].y = offsetY + offset.y;
-	}
-
-	//Will be used to normalize the map
-	double minHeight, maxHeight; 
-	minHeight = DBL_MAX;
-	maxHeight = DBL_MIN;
-
-	for (int y = 0; y < H; ++y)
-	{
-		for (int x = 0; x < W; ++x)
-		{
-			//Each noise value will consists of octaves whose frequencies and amplitudes
-			//are increased/decreased by the effect of lacunarity and persistence
-			double amplitude = 1.0;
-			double frequency = 1.0;
-			double noiseHeight = 0.0; //Will be accumulated from octaves
-			for (int i = 0; i < octaves; ++i)
-			{
-				//Frequency increases the range we take our values from the Noise Map
-				//Offset is a random seeded pseudo value so that we offset the octave we take
-				//our value from.
-				//Also we center the our samples at the center of the map
-				double sampleX = ((x - halfW) / scale) * frequency + octaveOffsets[i].x;
-				double sampleY = ((y - halfH) / scale) * frequency + octaveOffsets[i].y;
-
-				//For now using 0 as Z value
-				double noiseVal = noise(sampleX, sampleY, 0.0);
-				noiseHeight += noiseVal * amplitude;
-				amplitude *= persistence;
-				frequency *= lacunarity;
-			}
-
-			noiseMap[y][x] = noiseHeight;
-			maxHeight = std::max(noiseHeight, maxHeight);
-			minHeight = std::min(noiseHeight, minHeight);
-
-		}
-	}
-
-	//Normalize the map so that it is mapped between 0.0 and 1.0 
-	for (int y = 0; y < H; ++y)
-	{
-		for (int x = 0; x < W; ++x)
-			noiseMap[y][x] = inverseLerp(minHeight, maxHeight, noiseMap[y][x]);
-	}
-
-	return noiseMap;
-
-}
 
 std::vector<std::vector<double>> PerlinNoise::generateNoiseMap(const NoiseData& noiseData) const
 {
@@ -178,8 +96,8 @@ std::vector<std::vector<double>> PerlinNoise::generateNoiseMap(const NoiseData& 
 				//Offset is a random seeded pseudo value so that we offset the octave we take
 				//our value from.
 				//Also we center the our samples at the center of the map
-				double sampleX = ((x - halfW) / noiseData.scale) * frequency + octaveOffsets[i].x;
-				double sampleY = ((y - halfH) / noiseData.scale) * frequency + octaveOffsets[i].y;
+				double sampleX = ((x - halfW) / noiseData.W / noiseData.scale) * frequency + octaveOffsets[i].x;
+				double sampleY = ((y - halfH) / noiseData.H / noiseData.scale) * frequency + octaveOffsets[i].y;
 
 				//For now using 0 as Z value
 				double noiseVal = noise(sampleX, sampleY, 0.0);
