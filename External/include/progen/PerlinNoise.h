@@ -6,6 +6,26 @@
 #include <random>
 #include <glm/glm.hpp>
 
+
+/*
+	Necessary data needed for Noise Map Generation
+*/
+struct NoiseData
+{
+	int W; //W is the number of vertices in the x axis. Has the same value of numXVertices.
+	int H; //H is the number of vertices in the y axis. Has the same value of numZVertices.
+	//Noise Parameters
+	int seed;
+	double scale;
+	int octaves;
+	double persistence;
+	double lacunarity;
+	glm::vec2 offset;
+};
+
+
+
+
 /*
 	This is the improved Perlin Noise
 	REFERENCE: https://cs.nyu.edu/~perlin/noise/
@@ -32,6 +52,9 @@ public:
 		double lacunarity,
 		glm::vec2 offset
 													) const;
+
+	std::vector<std::vector<double>> generateNoiseMap(const NoiseData& noiseData) const;
+
 private:
 	std::vector<int> p; //Permutation vector
 private:

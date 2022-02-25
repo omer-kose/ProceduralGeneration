@@ -72,6 +72,9 @@
     <ClCompile Include="..\External\include\ImGui\imgui_widgets.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="..\External\include\progen\Terrain.cpp">
+      <Filter>progen\sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\include\progen\Camera.h">
@@ -112,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="..\External\include\ImGui\imgui_impl_opengl3_loader.h">
       <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\include\progen\Terrain.h">
+      <Filter>progen\headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

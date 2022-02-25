@@ -155,6 +155,7 @@
     <ClCompile Include="..\External\include\progen\Camera.cpp" />
     <ClCompile Include="..\External\include\progen\PerlinNoise.cpp" />
     <ClCompile Include="..\External\include\progen\Shader.cpp" />
+    <ClCompile Include="..\External\include\progen\Terrain.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -171,6 +172,7 @@
     <ClInclude Include="..\External\include\progen\Camera.h" />
     <ClInclude Include="..\External\include\progen\PerlinNoise.h" />
     <ClInclude Include="..\External\include\progen\Shader.h" />
+    <ClInclude Include="..\External\include\progen\Terrain.h" />
     <ClInclude Include="..\External\include\progen\Utilities.h" />
   </ItemGroup>
   <ItemGroup>

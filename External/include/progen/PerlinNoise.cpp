@@ -137,6 +137,74 @@ std::vector<std::vector<double>> PerlinNoise::generateNoiseMap
 
 }
 
+std::vector<std::vector<double>> PerlinNoise::generateNoiseMap(const NoiseData& noiseData) const
+{
+	std::vector<std::vector<double>> noiseMap(noiseData.H, std::vector<double>(noiseData.W));
+	std::mt19937 mt(noiseData.seed);
+	std::uniform_real_distribution<double> dist(-10000, 10000);
+	//We want to each octave to be sampled from a different location of the Perlin Noise Map
+	//So each octave will use an offset
+	std::vector<glm::vec2> octaveOffsets(noiseData.octaves);
+
+	double halfW = noiseData.W / 2;
+	double halfH = noiseData.H / 2;
+
+
+	for (int i = 0; i < noiseData.octaves; ++i)
+	{
+		double offsetX = dist(mt);
+		double offsetY = dist(mt);
+		octaveOffsets[i].x = offsetX + noiseData.offset.x;
+		octaveOffsets[i].y = offsetY + noiseData.offset.y;
+	}
+
+	//Will be used to normalize the map
+	double minHeight, maxHeight;
+	minHeight = DBL_MAX;
+	maxHeight = DBL_MIN;
+
+	for (int y = 0; y < noiseData.H; ++y)
+	{
+		for (int x = 0; x < noiseData.W; ++x)
+		{
+			//Each noise value will consists of octaves whose frequencies and amplitudes
+			//are increased/decreased by the effect of lacunarity and persistence
+			double amplitude = 1.0;
+			double frequency = 1.0;
+			double noiseHeight = 0.0; //Will be accumulated from octaves
+			for (int i = 0; i < noiseData.octaves; ++i)
+			{
+				//Frequency increases the range we take our values from the Noise Map
+				//Offset is a random seeded pseudo value so that we offset the octave we take
+				//our value from.
+				//Also we center the our samples at the center of the map
+				double sampleX = ((x - halfW) / noiseData.scale) * frequency + octaveOffsets[i].x;
+				double sampleY = ((y - halfH) / noiseData.scale) * frequency + octaveOffsets[i].y;
+
+				//For now using 0 as Z value
+				double noiseVal = noise(sampleX, sampleY, 0.0);
+				noiseHeight += noiseVal * amplitude;
+				amplitude *= noiseData.persistence;
+				frequency *= noiseData.lacunarity;
+			}
+
+			noiseMap[y][x] = noiseHeight;
+			maxHeight = std::max(noiseHeight, maxHeight);
+			minHeight = std::min(noiseHeight, minHeight);
+
+		}
+	}
+
+	//Normalize the map so that it is mapped between 0.0 and 1.0 
+	for (int y = 0; y < noiseData.H; ++y)
+	{
+		for (int x = 0; x < noiseData.W; ++x)
+			noiseMap[y][x] = inverseLerp(minHeight, maxHeight, noiseMap[y][x]);
+	}
+
+	return noiseMap;
+}
+
 double PerlinNoise::fade(double t) const
 {
 	return t * t * t * (t * (t * 6 - 15) + 10);;
