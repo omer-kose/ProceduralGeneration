@@ -1,2 +1,0 @@
--Create a terrain class that handles everything for the terrain. It will also store its own OpenGL buffers and I am going to access them via getters.
--Learn CMAKE and make it compilable for everyone
