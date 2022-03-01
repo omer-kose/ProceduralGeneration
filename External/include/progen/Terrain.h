@@ -18,6 +18,7 @@
 #include "Water.h"
 #include "Land.h"
 #include "Grass.h"
+#include "Snow.h"
 
 
 
@@ -49,7 +50,8 @@ struct TerrainData
 
 static Water WATER(0.0, 0.3, glm::vec3(0.1, 0.4, 0.6));
 static Grass GRASS(0.31, 0.6, glm::vec3(0.37, 0.502, 0.22));
-static Land LAND(0.61, 1.0, glm::vec3(0.3, 0.2, 0.0));
+static Land LAND(0.61, 0.89, glm::vec3(0.3, 0.2, 0.0));
+static Snow SNOW(0.9, 1.0, glm::vec3(1.0, 1.0, 1.0));
 
 
 /*

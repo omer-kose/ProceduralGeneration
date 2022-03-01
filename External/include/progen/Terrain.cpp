@@ -5,6 +5,7 @@ Terrain::Terrain()
 	biomes.push_back(&WATER);
 	biomes.push_back(&GRASS);
 	biomes.push_back(&LAND);
+	biomes.push_back(&SNOW);
 	createTerrainOpenGLInformation();
 }
 

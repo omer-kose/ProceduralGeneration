@@ -159,6 +159,7 @@
     <ClCompile Include="..\External\include\progen\Land.cpp" />
     <ClCompile Include="..\External\include\progen\PerlinNoise.cpp" />
     <ClCompile Include="..\External\include\progen\Shader.cpp" />
+    <ClCompile Include="..\External\include\progen\Snow.cpp" />
     <ClCompile Include="..\External\include\progen\Terrain.cpp" />
     <ClCompile Include="..\External\include\progen\Water.cpp" />
     <ClCompile Include="glad.c" />
@@ -181,6 +182,7 @@
     <ClInclude Include="..\External\include\progen\Land.h" />
     <ClInclude Include="..\External\include\progen\PerlinNoise.h" />
     <ClInclude Include="..\External\include\progen\Shader.h" />
+    <ClInclude Include="..\External\include\progen\Snow.h" />
     <ClInclude Include="..\External\include\progen\Terrain.h" />
     <ClInclude Include="..\External\include\progen\Utilities.h" />
     <ClInclude Include="..\External\include\progen\Water.h" />

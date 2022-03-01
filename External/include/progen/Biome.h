@@ -16,6 +16,8 @@ public:
 	~Biome();
 	bool inRange(double height) const;
 	glm::vec3 getColor() const;
+	double getLowerHeight() const;
+	double getUpperHeight() const;
 private:
 	double lowerHeight, upperHeight;
 	double range; // (upper-lower)

@@ -255,7 +255,7 @@ void setupData()
 	//The curve is near zero in [0, 0.3] range (Water) then it increases
 	tData.controlPoints[0] = 1.00f;
 	tData.controlPoints[1] = 0.0f;
-	tData.controlPoints[2] = 0.3f;
+	tData.controlPoints[2] = WATER.getUpperHeight();
 	tData.controlPoints[3] = 0.0f;
 	//-----------------------NOISE DATA------------------------------------//
 	nData.scale = 0.3;

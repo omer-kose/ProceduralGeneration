@@ -34,3 +34,13 @@ glm::vec3 Biome::getColor() const
 {
 	return color;
 }
+
+double Biome::getLowerHeight() const
+{
+	return lowerHeight;
+}
+
+double Biome::getUpperHeight() const
+{
+	return upperHeight;
+}
