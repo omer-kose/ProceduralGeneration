@@ -25,11 +25,16 @@
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_impl_glfw.h> 
 #include <ImGui/imgui_impl_opengl3.h>
+#include "progen/curveEditor.h"
 
 
-
+//Camera
 Camera camera(glm::vec3(0.0f, 5.0f, 15.0f));
 
+
+//Light Properties (For now, we only have directional light)
+glm::vec3 lightDir = glm::vec3(0.0, -100.0, 0.0);
+glm::vec3 lightColor = glm::vec3(1.0, 1.0, 1.0);
 
 //Time parameters
 double deltaTime = 0.0;
@@ -245,6 +250,13 @@ void setupData()
 	tData.L = 10;
 	tData.numXVertices = 256;
 	tData.numZVertices = 256;
+	tData.heightMultiplier = 1.0f;
+	//Set the control point coordinates
+	//The curve is near zero in [0, 0.3] range (Water) then it increases
+	tData.controlPoints[0] = 1.00f;
+	tData.controlPoints[1] = 0.0f;
+	tData.controlPoints[2] = 0.3f;
+	tData.controlPoints[3] = 0.0f;
 	//-----------------------NOISE DATA------------------------------------//
 	nData.scale = 0.3;
 	nData.octaves = 3;
@@ -292,6 +304,12 @@ void handleImGui()
 	//Initial Offset of the Octave
 	ImGui::SliderFloat("Initial Offset X", &nData.offset.x, 0.0f, 20.0f);
 	ImGui::SliderFloat("Initial Offset Y", &nData.offset.y, 0.0f, 20.0f);
+	//Height multiplier
+	ImGui::SliderFloat("Height Multiplier", &tData.heightMultiplier, 1.0f, 20.0f);
+	//Bezier Curve Editor
+	//Initial control points (not that important)
+    ImGui::Bezier( "Height Curve", tData.controlPoints );       // draw
+    float y = ImGui::BezierValue( 0.5f, tData.controlPoints ); // x delta in [0..1] range
 	if (ImGui::Button("Generate"))
 	{
 		terrain->generate(tData, nData);
@@ -310,7 +328,6 @@ int main()
 	setupData();
 	Shader terrainShader("../Shaders/basicLighting/basicLighting.vert", "../Shaders/basicLighting/basicLighting.frag");
 
-
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -326,7 +343,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//Render Shapes
-		terrain->renderTerrain(terrainShader, camera);
+		terrain->renderTerrain(terrainShader, camera, lightDir, lightColor);
 
 		//Handle ImGui
 		handleImGui();

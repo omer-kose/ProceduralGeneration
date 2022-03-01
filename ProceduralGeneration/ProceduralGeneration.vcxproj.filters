@@ -87,6 +87,9 @@
     <ClCompile Include="..\External\include\progen\Land.cpp">
       <Filter>progen\sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\External\include\progen\curveEditor.cpp">
+      <Filter>progen\sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\include\progen\Camera.h">
@@ -141,6 +144,9 @@
       <Filter>progen\headers</Filter>
     </ClInclude>
     <ClInclude Include="..\External\include\progen\Land.h">
+      <Filter>progen\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\include\progen\curveEditor.h">
       <Filter>progen\headers</Filter>
     </ClInclude>
   </ItemGroup>

@@ -11,13 +11,14 @@
 #include "Utilities.h"
 #include "PerlinNoise.h"
 #include "Shader.h"
-
+#include "curveEditor.h"
 
 //Biomes
 #include "Biome.h"
 #include "Water.h"
 #include "Land.h"
 #include "Grass.h"
+
 
 
 /*	
@@ -41,6 +42,8 @@ struct TerrainData
 	int W, L;
 	int numXVertices;
 	int numZVertices;
+	float heightMultiplier;
+	float controlPoints[4]; //Bezier Curve Control Point Data (x1,y1,x2,y2)
 };
 
 
@@ -67,12 +70,18 @@ class Terrain
 public:	
 	Terrain();
 	~Terrain();
-	void generate(const TerrainData& tData, const NoiseData& nData);
-	void renderTerrain(Shader& shader, const Camera& camera) const;
+	void generate(TerrainData& tData, const NoiseData& nData);
+	void renderTerrain
+	(Shader& shader, 
+	 const Camera& camera,
+	 const glm::vec3& lightDir,
+	 const glm::vec3& lightColor
+	) const;
 private:
-	void generateTerrain(const TerrainData& tData, const std::vector<std::vector<double>>& heightMap);
+	void generateTerrain(TerrainData& tData, const std::vector<std::vector<double>>& heightMap);
 	void createTerrainOpenGLInformation();
 	void setupOpenGLBuffers();
+	void computeNormals();
 private:
 	GLuint terrainVAO, terrainVBO, terrainEBO;
 	GLuint triCount;

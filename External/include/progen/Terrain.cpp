@@ -9,7 +9,7 @@ Terrain::Terrain()
 }
 
 
-void Terrain::generate(const TerrainData& tData, const NoiseData& nData)
+void Terrain::generate(TerrainData& tData, const NoiseData& nData)
 {
 	std::vector<std::vector<double>> noiseMap = noise.generateNoiseMap(nData);
 	generateTerrain(tData, noiseMap);
@@ -44,12 +44,33 @@ void Terrain::setupOpenGLBuffers()
 	glBindVertexArray(0);
 }
 
+void Terrain::computeNormals()
+{
+	//Traverse each triangle and compute face normal
+	for (int i = 0; i < tris.size(); ++i)
+	{
+		Vertex& v1 = vertexData[tris[i][0]];
+		Vertex& v2 = vertexData[tris[i][1]];
+		Vertex& v3 = vertexData[tris[i][2]];
+		//Triangle vertices are oriented counter-clockwise (I have written so while generating triangles)
+		glm::vec3 n = glm::normalize(glm::cross(v2.pos - v1.pos, v3.pos - v1.pos));
+		//Accumulate normals in incident vertices
+		v1.normal += n;
+		v2.normal += n;
+		v3.normal += n;
+	}
+
+	//Normalize the normals
+	for (Vertex& v : vertexData)
+		v.normal = glm::normalize(v.normal);
+}
+
 
 /*
 	Given the height map and information generateTerrain creates position and connectivity data.
 	Depending on the improvements it can do more or less.
 */
-void Terrain::generateTerrain(const TerrainData& tData, const std::vector<std::vector<double>>& heightMap)
+void Terrain::generateTerrain(TerrainData& tData, const std::vector<std::vector<double>>& heightMap)
 {
 	//I am lazy
 	using namespace std;
@@ -76,18 +97,24 @@ void Terrain::generateTerrain(const TerrainData& tData, const std::vector<std::v
 			p.x -= tData.W / 2.0;
 			p.z -= tData.L / 2.0;
 
-			//Pick the height value from the given height map
-			p.y = heightMap[z][x];
-
+			
+			//Note that since I scale the heights with height multiplier bellow
+			//Determining biome should come first before setting the actual height
+			//Basically, I first pick the biome in the range [0.0,1.0]
 			//Traverse biomes and see which biome fit
 			for (const Biome* biome : biomes)
 			{
-				if (biome->inRange(p.y))
+				if (biome->inRange(heightMap[z][x]))
 				{
 					v.color = biome->getColor();
 					break;
 				}
 			}
+
+			//Pick the height value from the given height map
+			//p.y = heightMap[z][x];
+			p.y = ImGui::BezierValue(heightMap[z][x], tData.controlPoints) * tData.heightMultiplier;
+
 
 
 			vec3 n = vec3(0.0, 1.0, 0.0);
@@ -105,6 +132,7 @@ void Terrain::generateTerrain(const TerrainData& tData, const std::vector<std::v
 			*/
 			if (((vi + 1) % tData.numXVertices != 0) && ((z + 1) < tData.numZVertices))
 			{
+				//Oriented counter-clockwise
 				ivec3 tri1 = ivec3(vi, vi + tData.numXVertices, vi + tData.numXVertices + 1);
 				ivec3 tri2 = ivec3(vi, vi + tData.numXVertices + 1, vi + 1);
 
@@ -119,6 +147,7 @@ void Terrain::generateTerrain(const TerrainData& tData, const std::vector<std::v
 
 	triCount = tris.size();
 	setupOpenGLBuffers();
+	computeNormals();
 
 }
 
@@ -137,14 +166,26 @@ Terrain::~Terrain()
 	glDeleteBuffers(1, &terrainEBO);
 }
 
-void Terrain::renderTerrain(Shader& shader, const Camera& camera) const
+void Terrain::renderTerrain
+(
+	Shader& shader, 
+	const Camera& camera,
+	const glm::vec3& lightDir,
+	const glm::vec3& lightColor
+) const
 {
 	shader.use();
 	glm::mat4 view = camera.getViewMatrix();
 	glm::mat4 projection = glm::perspective(glm::radians(camera.getFov()), (float)SCR_WIDTH / SCR_HEIGHT, 0.1f, 100.0f);
 	glm::mat4 model = glm::mat4(1.0f);
 	glm::mat4 PV = projection * view;
+	//Matrices
 	shader.setMat4("PVM", PV * model);
+	shader.setMat4("modelMat", model);
+	shader.setMat3("normalTransformation", glm::transpose(glm::inverse(glm::mat3(model))));
+	//Light Properties
+	shader.setVec3("lightDir", lightDir);
+	shader.setVec3("lightColor", lightColor);
 	glBindVertexArray(terrainVAO);
 	glDrawElements(GL_TRIANGLES, 3 * triCount, GL_UNSIGNED_INT, 0);
 }
