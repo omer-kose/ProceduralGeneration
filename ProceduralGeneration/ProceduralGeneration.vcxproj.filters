@@ -93,6 +93,9 @@
     <ClCompile Include="..\External\include\progen\Snow.cpp">
       <Filter>progen\sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\External\include\progen\FalloffMap.cpp">
+      <Filter>progen\sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\include\progen\Camera.h">
@@ -153,6 +156,9 @@
       <Filter>progen\headers</Filter>
     </ClInclude>
     <ClInclude Include="..\External\include\progen\Snow.h">
+      <Filter>progen\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\include\progen\FalloffMap.h">
       <Filter>progen\headers</Filter>
     </ClInclude>
   </ItemGroup>

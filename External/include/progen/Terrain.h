@@ -7,11 +7,15 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+
 #include "Camera.h"
 #include "Utilities.h"
 #include "PerlinNoise.h"
 #include "Shader.h"
 #include "curveEditor.h"
+#include "FalloffMap.h"
+
+
 
 //Biomes
 #include "Biome.h"
@@ -40,11 +44,13 @@ struct Vertex
 
 struct TerrainData
 {
-	int W, L;
+	std::vector<std::vector<double>> fallOffMap;
+	int W, L; 
 	int numXVertices;
 	int numZVertices;
 	float heightMultiplier;
 	float controlPoints[4]; //Bezier Curve Control Point Data (x1,y1,x2,y2)
+	bool useFallOff;
 };
 
 
@@ -90,7 +96,8 @@ private:
 	std::vector<Vertex> vertexData; //Total drawing data in the form v1|v2|v3... 
 	std::vector<glm::ivec3> tris;
 	std::vector<Biome*> biomes;
-	PerlinNoise noise;
+	PerlinNoise noise; //Noise map generator
+	FalloffMap fallOff; //Falloff map generator
 };
 
 #endif

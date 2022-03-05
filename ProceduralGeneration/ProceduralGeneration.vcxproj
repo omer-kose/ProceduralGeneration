@@ -155,6 +155,7 @@
     <ClCompile Include="..\External\include\progen\Biome.cpp" />
     <ClCompile Include="..\External\include\progen\Camera.cpp" />
     <ClCompile Include="..\External\include\progen\curveEditor.cpp" />
+    <ClCompile Include="..\External\include\progen\FalloffMap.cpp" />
     <ClCompile Include="..\External\include\progen\Grass.cpp" />
     <ClCompile Include="..\External\include\progen\Land.cpp" />
     <ClCompile Include="..\External\include\progen\PerlinNoise.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="..\External\include\progen\Biome.h" />
     <ClInclude Include="..\External\include\progen\Camera.h" />
     <ClInclude Include="..\External\include\progen\curveEditor.h" />
+    <ClInclude Include="..\External\include\progen\FalloffMap.h" />
     <ClInclude Include="..\External\include\progen\Grass.h" />
     <ClInclude Include="..\External\include\progen\Land.h" />
     <ClInclude Include="..\External\include\progen\PerlinNoise.h" />

@@ -251,6 +251,7 @@ void setupData()
 	tData.numXVertices = 256;
 	tData.numZVertices = 256;
 	tData.heightMultiplier = 1.0f;
+	tData.useFallOff = false;
 	//Set the control point coordinates
 	//The curve is near zero in [0, 0.3] range (Water) then it increases
 	tData.controlPoints[0] = 1.00f;
@@ -310,6 +311,8 @@ void handleImGui()
 	//Initial control points (not that important)
     ImGui::Bezier( "Height Curve", tData.controlPoints );       // draw
     float y = ImGui::BezierValue( 0.5f, tData.controlPoints ); // x delta in [0..1] range
+	//Control Falloff effect
+	ImGui::Checkbox("Use Falloff", &tData.useFallOff);
 	if (ImGui::Button("Generate"))
 	{
 		terrain->generate(tData, nData);

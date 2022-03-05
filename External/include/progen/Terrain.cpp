@@ -13,6 +13,7 @@ Terrain::Terrain()
 void Terrain::generate(TerrainData& tData, const NoiseData& nData)
 {
 	std::vector<std::vector<double>> noiseMap = noise.generateNoiseMap(nData);
+	tData.fallOffMap = fallOff.generate(tData.numXVertices, tData.numZVertices);
 	generateTerrain(tData, noiseMap);
 }
 
@@ -70,6 +71,8 @@ void Terrain::computeNormals()
 /*
 	Given the height map and information generateTerrain creates position and connectivity data.
 	Depending on the improvements it can do more or less.
+
+	If falloff map is enabled then the terrain becomes an island. 
 */
 void Terrain::generateTerrain(TerrainData& tData, const std::vector<std::vector<double>>& heightMap)
 {
@@ -98,14 +101,22 @@ void Terrain::generateTerrain(TerrainData& tData, const std::vector<std::vector<
 			p.x -= tData.W / 2.0;
 			p.z -= tData.L / 2.0;
 
-			
+			//If using falloff map the height map value will be updated accordingly
+			//So, at the corners of the terrain the value will be diminished by falloff map
+			//which will give an impression of island to the terrain.
+			double heightValue = heightMap[z][x];
+			if (tData.useFallOff)
+			{
+				heightValue = heightValue - tData.fallOffMap[z][x];
+			}
+
 			//Note that since I scale the heights with height multiplier bellow
 			//Determining biome should come first before setting the actual height
 			//Basically, I first pick the biome in the range [0.0,1.0]
 			//Traverse biomes and see which biome fit
 			for (const Biome* biome : biomes)
 			{
-				if (biome->inRange(heightMap[z][x]))
+				if (biome->inRange(heightValue))
 				{
 					v.color = biome->getColor();
 					break;
@@ -114,7 +125,7 @@ void Terrain::generateTerrain(TerrainData& tData, const std::vector<std::vector<
 
 			//Pick the height value from the given height map
 			//p.y = heightMap[z][x];
-			p.y = ImGui::BezierValue(heightMap[z][x], tData.controlPoints) * tData.heightMultiplier;
+			p.y = ImGui::BezierValue(heightValue, tData.controlPoints) * tData.heightMultiplier;
 
 
 
