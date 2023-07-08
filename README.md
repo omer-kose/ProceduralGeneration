@@ -1,5 +1,11 @@
 # Procedural Terrain Generation Engine
 
+<p align="center">
+  <img src="https://github.com/omer-kose/ProceduralGeneration/assets/44121631/3542dce3-c602-4168-9824-49a2b78dd72b" width = "50%">
+  <br>
+  An example view of the program
+</p>
+
 The engine procedurally generates a terrain of different biomes depending on different heights. The engine is still under development.
 
 
