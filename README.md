@@ -6,7 +6,7 @@
   An example view of the program
 </p>
 
-The engine procedurally generates a terrain of different biomes depending on different heights. The engine is still under development.
+The engine procedurally generates a terrain of different biomes depending on different heights.
 
 
 ## Development Environment
