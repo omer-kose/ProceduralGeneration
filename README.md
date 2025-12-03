@@ -34,16 +34,4 @@ The engine procedurally generates a terrain of different biomes depending on dif
 
 - Perlin Noise is used for the heightmap generation
 - Each biome has a height range. Depending on height the corresponding biome is picked.
-- The height values sampled from the noise map are undergone a non-linear function. This allows users to customize the height shape of the map with the curve editor GUI. 
-
-
-## TODO's (This will always be updated (I hope))
-- Textures for biomes
-- Better lighting model
-- A cubemap 
-- A water shader
-- Chunk system to create infinite worlds
-
-
-
-
+- The height values sampled from the noise map are undergone a non-linear function. This allows users to customize the height shape of the map with the curve editor GUI.
